@@ -61,6 +61,10 @@ static int ransac_trial(
 	{
 		float *datai = data + i*datadim;
 		float e = mev(model, datai, usr);
+		if (isnan(e)) {
+			fprintf(stderr, "ERROR: Encountered NaN value for e\n");
+			exit(EXIT_FAILURE); // Exit the program with failure status
+		}
 		if (!(e >= 0)) fprintf(stderr, "WARNING e = %g\n", e);
 		assert(e >= 0);
 		out_mask[i] = e < max_error;

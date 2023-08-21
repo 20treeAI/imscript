@@ -351,7 +351,13 @@ static float epipolar_euclidean_error(float *fm, float *pair, void *usr)
 		       fm[1]*p[0] + fm[4]*p[1] + fm[7],
 		       fm[2]*p[0] + fm[5]*p[1] + fm[8]};
 	float npf = hypot(pf[0], pf[1]);
-	if (npf == 0) // the epipolar line is (0, 0, 1), ie the line at infinity
+
+	// Check for NaN or infinite values in the intermediate variables
+	if (!isfinite(npf) || !isfinite(pf[0]) || !isfinite(pf[1])) {
+		fail("ERROR: Encountered non-finite value in epipolar_euclidean_error (npf: %f, pf[0]: %f, pf[1]: %f)", npf, pf[0], pf[1]);
+	}
+	
+	if (npf == 0) // the epipolar line is (0, 0, 1), i.e. the line at infinity
 		return INFINITY;
 	else {
 		pf[0] /= npf; pf[1] /= npf; pf[2] /= npf;
